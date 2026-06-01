@@ -151,6 +151,7 @@ extern unsigned long max_debug_file_size;
 
 extern int allow_empty_hostgroup_assignment;
 extern int allow_circular_dependencies;
+extern int allow_empty_configuration;
 extern int host_down_disable_service_checks;
 extern int service_parents_disable_service_checks;
 extern int service_skip_check_dependency_status;

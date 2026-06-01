@@ -1091,6 +1091,8 @@ read_config_file(const char *main_config_file, nagios_macros *mac)
 			allow_empty_hostgroup_assignment = (atoi(value) > 0) ? TRUE : FALSE;
 		} else if (!strcmp(variable, "allow_circular_dependencies")) {
 			allow_circular_dependencies = atoi(value);
+		} else if (!strcmp(variable, "allow_empty_configiration")) {
+			allow_empty_configuration = atoi(value);
 		} else if (!strcmp(variable, "host_down_disable_service_checks")) {
 			host_down_disable_service_checks = strtoul(value, NULL, 0);
 		} else if (!strcmp(variable, "service_parents_disable_service_checks")) {
@@ -1345,6 +1347,11 @@ int pre_flight_check(void)
 	/********************************************/
 	if (!allow_circular_dependencies) {
 		pre_flight_circular_check(&warnings, &errors);
+	}
+
+	/******************************************* */
+	if (!allow_empty_configuration) {
+		pre_flight_empty_check(&warnings, &errors);
 	}
 
 	/********************************************/
@@ -1619,6 +1626,50 @@ int pre_flight_object_check(int *w, int *e)
 
 	/* update warning and error count */
 	*w += warnings;
+	*e += errors;
+
+	return (errors > 0) ? ERROR : OK;
+}
+
+/* do a pre-flight check to make sure object relationships make sense */
+int pre_flight_empty_check(int *w, int *e)
+{
+	int errors = 0;
+
+	struct object_count *counts = &num_objects;
+
+	if(counts == NULL){
+		printf("Object counts struct to check is null.\n");
+		errors += 1;
+	}
+
+	if(counts->commands == 0){
+		printf("Command count is zero.\n");
+		errors += 1;
+	}
+
+	if(counts->hosts == 0){
+		printf("Host count is zero.\n");
+		errors += 1;
+	}
+	// count of hostescalations can be zero
+	// count of hostdependencies can be zero
+	// count of hostgroups can be zero;
+
+	// count of services can be zero
+	// count of serviceescalations can be zero
+	// count of servicedependencies can be zero
+	// count of servicegroups;
+
+	// count of contacts can be zero
+	// count of contactgroups can be zero
+
+	if(counts->timeperiods == 0){
+		printf("Timeperiod count is zero.\n");
+		errors += 1;
+	}
+
+	/* update warning and error count */
 	*e += errors;
 
 	return (errors > 0) ? ERROR : OK;

@@ -6,6 +6,7 @@
 #endif
 
 #include "lib/lnae-utils.h"
+#include "shared.h"
 
 NAGIOS_BEGIN_DECL
 
@@ -16,6 +17,7 @@ int read_all_object_data(const char *);				/* reads all object config data */
 int pre_flight_check(void);                          		/* try and verify the configuration data */
 int pre_flight_object_check(int *, int *);               	/* verify object relationships and settings */
 int pre_flight_circular_check(int *, int *);             	/* detects circular dependencies and paths */
+int pre_flight_empty_check(int *, int *);                   /* detects if the config parsed is empty */
 
 NAGIOS_END_DECL
 
